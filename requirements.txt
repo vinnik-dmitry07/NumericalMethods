@@ -1,0 +1,7 @@
+sympy
+numpy
+matplotlib
+seaborn
+pandas
+mayavi
+PyQt5

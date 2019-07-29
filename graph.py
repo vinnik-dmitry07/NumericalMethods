@@ -68,8 +68,10 @@ def draw(data):
 
     # plt.plot(x[:-1], [z[i+1]-z[i] for i in range(99)])
     # plt.scatter(x, z)
+    fz = lambda _x: (_x - x[0]) * (z[1] - z[0]) / (x[1] - x[0]) + z[0]
+    fx = lambda _z: (_z - z[0]) * (x[1] - x[0]) / (z[1] - z[0]) + x[0]
+    plt.plot([x[0], fz(0)], [z[0], 0])
     plt.plot(x, z)
-
     # df = pd.DataFrame.from_dict(np.array([x, y, z]).T)
     # df.columns = ['TAU', 'R', 'Q']
     # pivoted = df.pivot('R', 'TAU', 'Q')
@@ -100,7 +102,7 @@ def draw(data):
     # surf = ax.plot_trisurf(x,y[::-1],z)
     # plt.show()
 
-    # pts = mlab.points3d(x[::], y[::-1], z, z, scale_mode='none', scale_factor=0)
+    # pts = mlab.points3d(x, y[::-1], z, z, scale_mode='none', scale_factor=0)
     # mesh = mlab.pipeline.delaunay2d(pts)
     # surf = mlab.pipeline.surface(mesh)
     # mlab.show()
