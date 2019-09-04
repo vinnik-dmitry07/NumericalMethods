@@ -21,9 +21,7 @@ def norm(x_):
 
 
 def collinear(p1: Point, p2: Point, p3: Point):
-    if not (p3.y - p2.y) * (p2.x - p1.x) - (p2.y - p1.y) * (p3.x - p2.x) < EPS:
-        print(p1, p2, p3)
-    return (p3.y - p2.y) * (p2.x - p1.x) - (p2.y - p1.y) * (p3.x - p2.x) < EPS
+    return abs((p3.y - p2.y) * (p2.x - p1.x) - (p2.y - p1.y) * (p3.x - p2.x)) < EPS
 
 
 def line_from(p1: Point, p2: Point):
@@ -83,10 +81,11 @@ ORD = np.inf
 # X0 = [1.035945755659953, 1.468048170653296]
 # SYSTEM = ['1.1 - sin(t2 / 3) + ln(1 + (t1 + t2) / 5) - t1', '0.5 + cos(t1 * t2 / 6) - t2']  # -1.0959715096866944
 
-# X0 = [-5/3, -1/3]  # X0[0] = 0
+X0 = [-5/3, -1/3]
+X0[0] = 0
 # X0 = [-3/2, 1/2]
 # X0 = [1, 1]
-# SYSTEM = ['t1^2 - 2 * t2^2 - t1*t2 + 2*t1 - t2 + 1', '2 * t1^2 - t2^2 + t1*t2 + 3*t2 - 5']  # 0.016712364538451496
+SYSTEM = ['t1^2 - 2 * t2^2 - t1*t2 + 2*t1 - t2 + 1', '2 * t1^2 - t2^2 + t1*t2 + 3*t2 - 5']  # 0.016712364538451496
 
 # X0 = [3.4874427876429534523, 2.261628630553593956]  # - don't work
 # X0 = [1.4588902301521780083, -1.396767009181618128]
@@ -104,8 +103,8 @@ ORD = np.inf
 # SYSTEM = ['t1 + t2 - 3', 't1^2 + t2^2 - 9']  # - bad
 
 # X0 = [-0.7851969330623552256, 0.496611392944656396, 0.369922830745872357]
-X0 = [0.7851969330623552256, 0.496611392944656396, 0.369922830745872357]
-SYSTEM = ['t1^2 + t2^2 + t3^2 - 1', '2*t1^2 + t2^2 - 4*t3', '3*t1^2 - 4*t2 + t3^2']  # - bad
+# X0 = [0.7851969330623552256, 0.496611392944656396, 0.369922830745872357]
+# SYSTEM = ['t1^2 + t2^2 + t3^2 - 1', '2*t1^2 + t2^2 - 4*t3', '3*t1^2 - 4*t2 + t3^2']  # - bad
 
 VARIABLES = sympy.symbols('t1:' + str(len(X0) + 1))
 F = sympy.sympify(SYSTEM)
@@ -114,11 +113,9 @@ assert N % 2 == 0 and N >= 6
 
 if __name__ == '__main__':
     plt.gcf().canvas.mpl_connect('button_press_event', onclick)
-
+    X0[1]+=0.1
     E = np.identity(len(X0))
     dF = sympy.Matrix(len(F), len(VARIABLES), lambda i_, j_: sympy.diff(F[i_], VARIABLES[j_]))
-
-    # X0[0] += 0.5
 
     opt1 = norm(np.array(lambda_from(F)(*X0))) / EPS
 
@@ -165,73 +162,106 @@ if __name__ == '__main__':
     if a is None:
         raise Exception()
 
-    l = None
-    d = h
+    ul = a
     while True:
-        x = np.linspace(a, a + d, 5)[1:-1]
-        y = np.vectorize(calc)(x)
-        points = [Point(x_i, y_i) for x_i, y_i in zip(x, y)]
-        if not np.any(np.isnan(y)) and points[0].y > points[2].y and collinear(*points):
-            l = line_from(points[0], points[2])
+        vl = calc(ul)
+        if not np.isnan(vl):
             break
-        else:
-            d /= 2
-            if d < 2*EPS:
-                break
-    print(d)
-    l1 = None
-    d = h
-    while True:
-        x = np.linspace(b-d, b, 5)[1:-1]
-        y = np.vectorize(calc)(x)
-        points1 = [Point(x_i, y_i) for x_i, y_i in zip(x, y)]
-        if not np.any(np.isnan(y)) and points1[0].y < points1[2].y and collinear(*points1):
-            l1 = line_from(points1[0], points1[2])
-            break
-        else:
-            d /= 2
-            if d < 2*EPS:
-                break
-    # g = super_space(10)
-    # while True:
-    #     t1 = next(g)
-    #     t2 = next(g)
-    #     t3 = next(g)
+        ul += EPS
 
-    if l is not None and l1 is not None:
-        intersection = lines_intersection(points[0], points[2], points1[0], points1[2])
-    elif l is not None:
-        d = 0
-        while True:
-            y = calc(b - d)
-            if not np.isnan(y):
-                break
-            d += EPS
-        intersection = Point(b - d, y)
-    elif l1 is not None:
-        d = 0
-        while True:
-            y = calc(a + d)
-            if not np.isnan(y):
-                break
-            d += EPS
-        intersection = Point(a + d, y)
+    ur = b
+    while True:
+        vr = calc(ur)
+        if not np.isnan(vr):
+            break
+        ur -= EPS
+
+    xl = yl = xr = yr = None
+    kl_min = kr_min = np.inf
+
+    points = []
+    for x in np.linspace(a, b, 22)[1:-1]:
+        y = calc(x)
+        if not np.isnan(y):
+            points.append(Point(x, y))
+            kl = (y - vl) / (x - ul)
+            kr = (y - vr) / (ur - x)
+            if kl < kl_min:
+                kl_min = kl
+                xl = x
+                yl = y
+            if kr < kr_min:
+                kr_min = kr
+                xr = x
+                yr = y
+
+    left_base = [Point(ul, vl), Point(xl, yl)]
+    right_base = [Point(ur, vr), Point(xr, yr)]
+
+    left_line = right_line = None
+    if vl > yl:
+        left_line = line_from(*left_base)
+    if vr > yr:
+        right_line = line_from(*right_base)
+
+    # l = None
+    # d = h
+    # while True:
+    #     x = np.linspace(a, a + d, 5)[1:-1]
+    #     y = np.vectorize(calc)(x)
+    #     points = [Point(x_i, y_i) for x_i, y_i in zip(x, y)]
+    #     if not np.any(np.isnan(y)) and points[0].y > points[2].y and collinear(*points):
+    #         l = line_from(points[0], points[2])
+    #         break
+    #     else:
+    #         d /= 1.1
+    #         if d < 1.1*EPS:
+    #             break
+    # print(d)
+
+    # l1 = None
+    # d = h
+    # while True:
+    #     x = np.linspace(b-d, b, 5)[1:-1]
+    #     y = np.vectorize(calc)(x)
+    #     points1 = [Point(x_i, y_i) for x_i, y_i in zip(x, y)]
+    #     if not np.any(np.isnan(y)) and points1[0].y < points1[2].y and collinear(*points1):
+    #         l1 = line_from(points1[0], points1[2])
+    #         break
+    #     else:
+    #         d /= 1.1
+    #         if d < 1.1*EPS:
+    #             break
+
+    if left_line is not None and right_line is not None:
+        intersection = lines_intersection(left_base[0], left_base[1], right_base[0], right_base[1])
+    elif left_line is not None:
+        intersection = points[-1]
+    elif right_line is not None:
+        intersection = points[0]
     else:
         raise Exception()
 
     print(intersection.x, calc(intersection.x))
-    plt.scatter(intersection.x, intersection.y)
+    # plt.scatter(intersection.x, intersection.y, s=80,color='r')
 
-    x = np.linspace(a, b, N + 1)
-    y3 = []
-    for x_i in x:
-        y3.append(1 + (x_i if x_i < 0 else -x_i))
+    # x, y = zip(*points)
+    # plt.scatter(x,y,s=10)
+    # x, y = zip(*points1)
+    # plt.scatter(x,y,s=10)
+    # x = np.linspace(a, b, N+1)
+    # y = np.vectorize(calc)(x, False)
+    # plot = plt.scatter(x, y, s=6)
 
-    plot = plt.scatter(x, np.vectorize(calc)(x, False))
-    if l is not None:
-        plt.plot(x, l(x))
-    if l1 is not None:
-        plt.plot(x, l1(x))
+    # plt.scatter(*zip(*left_base))
+    # plt.scatter(*zip(*right_base))
+    # x,y= zip(*points)
+    # plt.scatter(x, y, s=20)
+    # if left_line is not None:
+    #     plt.plot(x, left_line(x))
+    # if right_line is not None:
+    #     plt.plot(x, right_line(x))
+
     # plt.plot(x, x)
 
     # plt.axes().set_aspect('equal', 'datalim')
@@ -247,9 +277,13 @@ if __name__ == '__main__':
     # plt.plot(x, y_r)
     # plt.scatter(x, y-y_r, s=1)
 
-    plt.ylim(0, 1)
-    plt.xlim(a, b)
-    plt.show()
+    # plt.ylim(0.825, 1.01)
+    # plt.xlim(a, b)
+    # print('limits:\n', plt.gca().get_xlim(), plt.gca().get_ylim())
+    # plt.xlabel('τ', fontsize=14)
+    # plt.ylabel('q', fontsize=14)
+    # plt.show()
+
 
     # with open('res', 'wb') as f:
     #     pickle.dump(res, f)
