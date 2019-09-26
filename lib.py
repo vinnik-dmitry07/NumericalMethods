@@ -7,9 +7,11 @@ from scipy import optimize
 
 
 def f_max(func, x0, bounds=None):
-    return -optimize.fmin_l_bfgs_b(func=lambda *t: -func(*t), x0=x0, approx_grad=True, bounds=bounds, factr=1.0,
-                                   pgtol=np.finfo(float).eps, maxfun=np.inf, maxiter=np.inf,
-                                   epsilon=np.finfo(float).eps, maxls=np.iinfo(np.int).max)[1]
+    return -optimize.fmin_l_bfgs_b(func=lambda *t: -func(*t), x0=x0, approx_grad=True, bounds=bounds)[1]
+
+
+def f_min(func, x0, bounds=None):
+    return optimize.fmin_l_bfgs_b(func=lambda *t: func(*t), x0=x0, approx_grad=True, bounds=bounds)[1]
 
 
 def closed_ball(x, r):
