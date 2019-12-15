@@ -21,8 +21,8 @@ def closed_ball(x, r):
     return res
 
 
-def star_wars():
-    with open("star_wars", "rb") as f:
+def beep():
+    with open("beep", "rb") as f:
         x = pickle.load(f)
         for fq, lt, dr in x:
             winsound.Beep(fq, lt)
