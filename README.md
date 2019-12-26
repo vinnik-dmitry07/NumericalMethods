@@ -1,3 +1,3 @@
 # NonlinearRelaxation
 
-Based on the [paper](ЧМ.pdf).
+Based on [my paper](ЧМ.pdf).
