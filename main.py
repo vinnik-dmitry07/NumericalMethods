@@ -25,8 +25,11 @@ L_lambda = lambdify([a, DeferredVector('x'), DeferredVector('y')], L, 'numpy')
 display_grid = np.linspace(A, B, 1000)
 interpol_grid = np.linspace(A, B, N + 1)
 che_interpol_grid = (cheb.chebroots((0, 0, 0, 0, 0, 1)) * (B - A) + A + B) / 2
-plt.plot(display_grid, L_lambda(a=display_grid, x=interpol_grid, y=np.sin(interpol_grid)), color='red')
-plt.plot(display_grid, L_lambda(a=display_grid, x=che_interpol_grid, y=np.sin(che_interpol_grid)), color='blue')
-plt.plot(display_grid, np.sin(display_grid), color='green')
+plt.plot(display_grid, L_lambda(a=display_grid, x=interpol_grid, y=np.sin(interpol_grid)), color='red',
+         label='Lagrange polynomial (equidistant nodes)')
+plt.plot(display_grid, L_lambda(a=display_grid, x=che_interpol_grid, y=np.sin(che_interpol_grid)), color='blue',
+         label='Lagrange polynomial (roots-of-Chebyshev-series nodes)')
+plt.plot(display_grid, np.sin(display_grid), color='green', label='sin(x)')
 
+plt.legend(loc='upper left')
 plt.show()
