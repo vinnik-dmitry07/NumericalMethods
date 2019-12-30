@@ -1,3 +1,6 @@
+# ModifiedNewtonFixedPointIteration
+![Result](ModifiedNewtonFixedPointIteration/result.png)
+
 # LagrangePolynomial
 Lagrange polynomial interpolation using zeros of Chebyshev series.
 ## Result:
