@@ -17,7 +17,7 @@ where ![metric](https://latex.codecogs.com/gif.latex?%5Cleft%20%5C%7C%20f%20%5Cr
 
 # SimpsonIntegration
 <!---{\int \limits _{a}^{b}f(x)dx}\approx {\frac  {b-a}{6}}{\left(f(a)+4f\left({\frac  {a+b}{2}}\right)+f(b)\right)}-->
-![formula](https://latex.codecogs.com/gif.latex?%7B%5Cint%20%5Climits%20_%7Ba%7D%5E%7Bb%7Df%28x%29dx%7D%5Capprox%20%7B%5Cfrac%20%7Bb-a%7D%7B6%7D%7D%7B%5Cleft%28f%28a%29+4f%5Cleft%28%7B%5Cfrac%20%7Ba+b%7D%7B2%7D%7D%5Cright%29+f%28b%29%5Cright%29%7D),
+![formula](https://latex.codecogs.com/gif.latex?%7B%5Cint%20%5Climits%20_%7Ba%7D%5E%7Bb%7Df%28x%29dx%7D%5Capprox%20%7B%5Cfrac%20%7Bb-a%7D%7B6%7D%7D%7B%5Cleft%28f%28a%29+4f%5Cleft%28%7B%5Cfrac%20%7Ba+b%7D%7B2%7D%7D%5Cright%29+f%28b%29%5Cright%29%7D)
 ## Output
 ```
 Simpson:
