@@ -1,3 +1,6 @@
+# NonlinearRelaxation
+Based on [my paper](NonlinearRelaxation/paper.pdf).
+
 # ModifiedNewtonFixedPointIteration
 ![Result](ModifiedNewtonFixedPointIteration/result.png)
 
@@ -5,9 +8,6 @@
 Lagrange polynomial interpolation using zeros of Chebyshev series.
 ## Result:
 ![Result](LagrangePolynomial/result.png)
-
-# NonlinearRelaxation
-Based on [my paper](NonlinearRelaxation/paper.pdf).
 
 # UniformApproximation
 The best uniform approximation is the approximation in space 
